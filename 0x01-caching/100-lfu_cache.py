@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """ 100-lfu_cache module """
-
-BaseCaching = __import__('base_catching').BaseCaching
+from base_catching import BaseCaching
 
 
 class LFUCache(BaseCaching):

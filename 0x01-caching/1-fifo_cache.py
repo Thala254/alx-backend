@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """ 1-fifo_cache module """
-
-BaseCaching = __import__('base_catching').BaseCaching
+from base_catching import BaseCaching
 
 
 class FIFOCache(BaseCaching):

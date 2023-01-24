@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """ 3-lru_cache module """
-
-BaseCaching = __import__('base_catching').BaseCaching
+from base_catching import BaseCaching
 
 
 class LRUCache(BaseCaching):
