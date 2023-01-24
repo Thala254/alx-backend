@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """ 2-lifo_cache module """
 
 BaseCaching = __import__('base_catching').BaseCaching
