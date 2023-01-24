@@ -19,13 +19,13 @@ class BasicCache(BaseCaching):
         for the key key
         """
         if key is None or item is None:
-            pass
+            return
         self.cache_data[key] = item
 
     def get(self, key):
         """
         method that returns the value in self.cache_data linked to key
         """
-        if key is None or key not in self.cache_data.keys():
-            return None
-        return self.cache_data[key]
+        # if key is None or key not in self.cache_data.keys():
+        #     return None
+        return self.cache_data.get(key, None)
