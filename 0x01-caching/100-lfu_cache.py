@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" 100-lfu_cache module """
+""" Least frequecncy used cache module """
 from base_catching import BaseCaching
 
 

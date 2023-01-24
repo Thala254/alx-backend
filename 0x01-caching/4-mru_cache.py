@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" 4-mru_cache module """
+""" Most recently used cache module """
 from base_catching import BaseCaching
 
 

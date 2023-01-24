@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" 3-lru_cache module """
+""" Least recently used cache module """
 from base_catching import BaseCaching
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" 2-lifo_cache module """
+""" Last-in-first-out cache module """
 from base_catching import BaseCaching
 
 
