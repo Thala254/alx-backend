@@ -1,57 +1,72 @@
 #!/usr/bin/env python3
-""" Least frequecncy used cache module """
+"""Least Frequently Used caching module.
+"""
+from collections import OrderedDict
 from base_caching import BaseCaching
 
 
 class LFUCache(BaseCaching):
-    """
-    LFUCache class that implements a LFU caching system i.e.
-    Least frequently used - discards least often used items first
+    """Represents an object that allows storing and
+    retrieving items from a dictionary with a LFU
+    removal mechanism when the limit is reached.
     """
     def __init__(self):
-        """
-        initializes an instance of LFUCache class
+        """Initializes the cache.
         """
         super().__init__()
-        self.usage = []
-        self.frequency = {}
+        self.cache_data = OrderedDict()
+        self.keys_freq = []
+
+    def __reorder_items(self, mru_key):
+        """Reorders the items in this cache based on the most
+        recently used item.
+        """
+        max_positions = []
+        mru_freq = 0
+        mru_pos = 0
+        ins_pos = 0
+        for i, key_freq in enumerate(self.keys_freq):
+            if key_freq[0] == mru_key:
+                mru_freq = key_freq[1] + 1
+                mru_pos = i
+                break
+            elif len(max_positions) == 0:
+                max_positions.append(i)
+            elif key_freq[1] < self.keys_freq[max_positions[-1]][1]:
+                max_positions.append(i)
+        max_positions.reverse()
+        for pos in max_positions:
+            if self.keys_freq[pos][1] > mru_freq:
+                break
+            ins_pos = pos
+        self.keys_freq.pop(mru_pos)
+        self.keys_freq.insert(ins_pos, [mru_key, mru_freq])
 
     def put(self, key, item):
-        """
-        method that caches a key-value pair in a dictionary
+        """Adds an item in the cache.
         """
         if key is None or item is None:
-            pass
-        if len(self.cache_data) >= BaseCaching.MAX_ITEMS and \
-           key not in self.cache_data:
-            lfu = min(self.frequency.values())
-            lfu_keys = [k for k, v in self.frequency.items() if v == lfu]
-
-            if len(lfu_keys) > 1:
-                lru_lfu = {k: self.usage.index(k) for k in lfu_keys}
-                discard = self.usage[min(lru_lfu.values())]
-            else:
-                discard = lfu_keys[0]
-
-            print(f'DISCARD: {discard}')
-            del self.cache_data[discard]
-            del self.usage[self.usage.index(discard)]
-            del self.frequency[discard]
-        # update usage frequency
-        self.frequency[key] = self.frequency[key] + 1 if key in self.frequency\
-            else 1
-        if key in self.usage:
-            del self.usage[self.usage.index(key)]
-        self.usage.append(key)
-        self.cache_data[key] = item
+            return
+        if key not in self.cache_data:
+            if len(self.cache_data) + 1 > BaseCaching.MAX_ITEMS:
+                lfu_key, _ = self.keys_freq[-1]
+                self.cache_data.pop(lfu_key)
+                self.keys_freq.pop()
+                print("DISCARD:", lfu_key)
+            self.cache_data[key] = item
+            ins_index = len(self.keys_freq)
+            for i, key_freq in enumerate(self.keys_freq):
+                if key_freq[1] == 0:
+                    ins_index = i
+                    break
+            self.keys_freq.insert(ins_index, [key, 0])
+        else:
+            self.cache_data[key] = item
+            self.__reorder_items(key)
 
     def get(self, key):
+        """Retrieves an item by key.
         """
-        method that returns the value in self.cache_data linked to key, or None
-        """
-        if key is None or key not in self.cache_data.keys():
-            return None
-        del self.usage[self.usage.index(key)]
-        self.usage.append(key)
-        self.frequency[key] += 1
-        return self.cache_data[key]
+        if key is not None and key in self.cache_data:
+            self.__reorder_items(key)
+        return self.cache_data.get(key, None)
