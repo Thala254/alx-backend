@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """ Least recently used cache module """
-from base_catching import BaseCaching
+from collections import OrderedDict
+from base_caching import BaseCaching
 
 
 class LRUCache(BaseCaching):
@@ -13,30 +14,27 @@ class LRUCache(BaseCaching):
         initializes an instance of LRUCache class
         """
         super().__init__()
-        self.usage = []
+        self.cache_data = OrderedDict()
 
     def put(self, key, item):
         """
-        method that caches a key-value pair in a dictionary
+        method that adds an item in the cache
         """
         if key is None or item is None:
-            pass
-        if len(self.cache_data) >= BaseCaching.MAX_ITEMS and \
-           key not in self.cache_data:
-            print(f'DISCARD: {self.usage[0]}')
-            del self.cache_data[self.usage[0]]
-            del self.usage[0]
-        if key in self.usage:
-            del self.usage[self.usage.index(key)]
-        self.usage.append(key)
-        self.cache_data[key] = item
+            return
+        if key not in self.cache_data:
+            if len(self.cache_data) + 1 > BaseCaching.MAX_ITEMS:
+                lru_key, _ = self.cache_data.popitem(True)
+                print(f'DISCARD: {lru_key}')
+            self.cache_data[key] = item
+            self.cache_data.move_to_end(key, last=False)
+        else:
+            self.cache_data[key] = item
 
     def get(self, key):
         """
-        method that returns the value in self.cache_data linked to key, or None
+        method that retrieves an item from cache by key
         """
-        if key is None or key not in self.cache_data.keys():
-            return None
-        del self.usage[self.usage.index(key)]
-        self.usage.append(key)
-        return self.cache_data[key]
+        if key is not None and key in self.cache_data:
+            self.cache_data.move_to_end(key, last=False)
+        return self.cache_data.get(key, None)

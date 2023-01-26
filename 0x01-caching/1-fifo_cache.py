@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """ First-in-first-out cache module """
-from base_catching import BaseCaching
+from collections import OrderedDict
+from base_caching import BaseCaching
 
 
 class FIFOCache(BaseCaching):
@@ -10,29 +11,24 @@ class FIFOCache(BaseCaching):
     """
     def __init__(self):
         """
-        initializes an instance of FIFOCache class
+        initializes the cache
         """
         super().__init__()
-        self.order = []
+        self.cache_data = OrderedDict()
 
     def put(self, key, item):
         """
-        method that caches a key-value pair in a dictionary
+        method that adds an item to the cache
         """
         if key is None or item is None:
-            pass
-        if len(self.cache_data) >= BaseCaching.MAX_ITEMS and \
-           key not in self.cache_data:
-            print(f'DISCARD: {self.order[0]}')
-            del self.cache_data[self.order[0]]
-            del self.order[0]
-        self.order.append(key)
+            return
         self.cache_data[key] = item
+        if len(self.cache_data) > BaseCaching.MAX_ITEMS:
+            first_key, _ = self.cache_data.popitem(False)
+            print(f'DISCARD: {first_key}')
 
     def get(self, key):
         """
-        method that returns the value in self.cache_data linked to key, or None
+        method that retrives an item from cache by the key
         """
-        if key is None or key not in self.cache_data.keys():
-            return None
-        return self.cache_data[key]
+        return self.cache_data.get(key, None)

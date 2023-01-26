@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """ Least frequecncy used cache module """
-from base_catching import BaseCaching
+from base_caching import BaseCaching
 
 
 class LFUCache(BaseCaching):

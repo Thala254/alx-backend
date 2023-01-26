@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """ Basic cache module """
-from base_catching import BaseCaching
+from base_caching import BaseCaching
 
 
 class BasicCache(BaseCaching):
@@ -26,6 +26,4 @@ class BasicCache(BaseCaching):
         """
         method that returns the value in self.cache_data linked to key
         """
-        # if key is None or key not in self.cache_data.keys():
-        #     return None
         return self.cache_data.get(key, None)

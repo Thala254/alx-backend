@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """ Most recently used cache module """
-from base_catching import BaseCaching
+from collections import OrderedDict
+from base_caching import BaseCaching
 
 
 class MRUCache(BaseCaching):
@@ -13,31 +14,27 @@ class MRUCache(BaseCaching):
         initializes an instance of MRUCache class
         """
         super().__init__()
-        self.usage = []
+        self.cache_data = OrderedDict()
 
     def put(self, key, item):
         """
-        method that caches a key-value pair in a dictionary
+        method that adds an item to the cache
         """
         if key is None or item is None:
-            pass
-        last_index = len(self.usage) - 1
-        if len(self.cache_data) >= BaseCaching.MAX_ITEMS and \
-           key not in self.cache_data:
-            print(f'DISCARD: {self.usage[last_index]}')
-            del self.cache_data[self.usage[last_index]]
-            del self.usage[last_index]
-        if key in self.usage:
-            del self.usage[self.usage.index(key)]
-        self.usage.append(key)
-        self.cache_data[key] = item
+            return
+        if key not in self.cache_data:
+            if len(self.cache_data) + 1 > BaseCaching.MAX_ITEMS:
+                mru_key, _ = self.cache_data.popitem(False)
+                print(f'DISCARD: {mru_key}')
+            self.cache_data[key] = item
+            self.cache_data.move_to_end(key, last=False)
+        else:
+            self.cache_data[key] = item
 
     def get(self, key):
         """
-        method that returns the value in self.cache_data linked to key, or None
+        method that retrieves item from cache by key
         """
-        if key is None or key not in self.cache_data.keys():
-            return None
-        del self.usage[self.usage.index(key)]
-        self.usage.append(key)
-        return self.cache_data[key]
+        if key is not None and key in self.cache_data:
+            self.cache_data.move_to_end(key, last=False)
+        return self.cache_data.get(key, None)
