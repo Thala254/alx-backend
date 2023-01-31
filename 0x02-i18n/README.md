@@ -1,6 +1,6 @@
 # 0x02. i18n
 
-![i18n](images/)
+![i18n](images/title.png)
 
 ## Resources
 
@@ -108,7 +108,8 @@ In your `get_locale` function, detect if the incoming request contains `locale` 
 Now you should be able to test different translations by visiting `http://127.0.0.1:5000?locale=[fr|en]`.
 
 **Visiting `http://127.0.0.1:5000/?locale=fr` should display this level 1 heading:**
-[]()
+
+![pic](images/4.png)
 
 **Solution [4-app.py](4-app.py), [templates/4-index.html](templates/4-index.html)**
 
@@ -139,10 +140,12 @@ In your HTML template, if a user is logged in, in a paragraph tag, display a wel
 | `not_logged_in` | `"You are not logged in."` | `"Vous n'êtes pas connecté."` |
 
 **Visiting `http://127.0.0.1:5000/` in your browser should display this:**
-[]()
+
+![png](images/5a.png)
 
 **Visiting `http://127.0.0.1:5000/?login_as=2` in your browser should display this:** 
-[]()
+
+![png](images/5b.png)
 
 **Solution [5-app.py](5-app.py), [templates/5-index.html](templates/5-index.html)**
 
@@ -158,6 +161,8 @@ The order of priority should be
     4.Default locale
 
 Test by logging in as different users
+
+![pic](images/6.png)
 
 **Solution [6-app.py](6-app.py), [templates/6-index.html](templates/6-index.html)**
 
@@ -188,9 +193,11 @@ Use the following translations
 | `current_time_is` | `"The current time is %(current_time)s."` | `"Nous sommes le %(current_time)s."` |
 
 **Displaying the time in French looks like this:**
-[]()
+
+![pic](images/a.png)
 
 **Displaying the time in English looks like this:**
-[]()
+
+![pic](images/b.png)
 
 **Solution [app.py](app.py), [templates/index.html](templates/index.html), [translations/en/LC_MESSAGES/messages.po](translations/en/LC_MESSAGES/messages.po), [translations/fr/LC_MESSAGES/messages.po](translations/fr/LC_MESSAGES/messages.po)**
