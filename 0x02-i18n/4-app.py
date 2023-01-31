@@ -17,6 +17,7 @@ app.url_map.strict_slashes = False
 
 babel = Babel(app)
 
+
 @babel.localeselector
 def get_locale():
     """
@@ -27,6 +28,7 @@ def get_locale():
     if loc in app.config['LANGUAGES']:
         return loc
     return request.accept_languages.best_match(app.config['LANGUAGES'])
+
 
 @app.route('/')
 def index() -> str:

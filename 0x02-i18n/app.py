@@ -31,6 +31,7 @@ app.url_map.strict_slashes = False
 
 babel = Babel(app)
 
+
 def get_user() -> Union[Dict, None]:
     """
     function that returns a user dictionary or None if the ID cannot be found
@@ -40,6 +41,7 @@ def get_user() -> Union[Dict, None]:
     if id and int(id) in users:
         return users.get(int(id))
     return None
+
 
 @app.before_request
 def before_request() -> None:
@@ -54,6 +56,7 @@ def before_request() -> None:
     locale.setlocale(locale.LC_TIME, (get_locale(), 'UTF-8'))
     fmt = "%b %d, %Y, %I:%M:%S %p"
     g.time = time.strftime(fmt)
+
 
 @babel.localeselector
 def get_locale() -> str:
@@ -71,6 +74,7 @@ def get_locale() -> str:
     if loc in app.config['LANGUAGES']:
         return loc
     return request.accept_languages.best_match(app.config['LANGUAGES'])
+
 
 @babel.timezoneselector
 def get_timezone() -> str:
@@ -91,6 +95,7 @@ def get_timezone() -> str:
             pass
     default_time_zone = app.config['BABEL_DEFAULT_TIMEZONE']
     return default_time_zone
+
 
 @app.route('/')
 def index() -> str:
