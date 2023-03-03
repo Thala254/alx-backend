@@ -15,24 +15,18 @@ const PORT = 1245;
  * Modifies the number of available seats.
  * @param {number} number - The new number of seats.
  */
-const reserveSeat = async (number) => {
-  return promisify(client.SET).bind(client)('available_seats', number);
-};
+const reserveSeat = async (number) => promisify(client.SET).bind(client)('available_seats', number);
 
 /**
  * Retrieves the number of available seats.
  * @returns {Promise<String>}
  */
-const getCurrentAvailableSeats = async () => {
-  return promisify(client.GET).bind(client)('available_seats');
-};
+const getCurrentAvailableSeats = async () => promisify(client.GET).bind(client)('available_seats');
 
 app.get('/available_seats', (_, res) => {
   getCurrentAvailableSeats()
     // .then(result => Number.parseInt(result || 0))
-    .then((numberOfAvailableSeats) => {
-      res.json({ numberOfAvailableSeats })
-    });
+    .then((numberOfAvailableSeats) => res.json({ numberOfAvailableSeats }));
 });
 
 app.get('/reserve_seat', (_req, res) => {
@@ -52,15 +46,11 @@ app.get('/reserve_seat', (_req, res) => {
       );
     });
     job.on('complete', () => {
-      console.log(
-        'Seat reservation job',
-        job.id,
-        'completed'
-      );
+      console.log('Seat reservation job', job.id, 'completed');
     });
     job.save();
     res.json({ status: 'Reservation in process' });
-  } catch {
+  } catch (e) {
     res.json({ status: 'Reservation failed' });
   }
 });
@@ -69,7 +59,7 @@ app.get('/process', (_req, res) => {
   res.json({ status: 'Queue processing' });
   queue.process('reserve_seat', (_job, done) => {
     getCurrentAvailableSeats()
-      .then((result) => Number.parseInt(result || 0))
+      .then((result) => Number.parseInt(result || 0, 10))
       .then((availableSeats) => {
         reservationEnabled = availableSeats <= 1 ? false : reservationEnabled;
         if (availableSeats >= 1) {
@@ -82,10 +72,7 @@ app.get('/process', (_req, res) => {
   });
 });
 
-const resetAvailableSeats = async (initialSeatsCount) => {
-  return promisify(client.SET)
-    .bind(client)('available_seats', Number.parseInt(initialSeatsCount));
-};
+const resetAvailableSeats = async (initialSeatsCount) => promisify(client.SET).bind(client)('available_seats', Number.parseInt(initialSeatsCount, 10));
 
 app.listen(PORT, () => {
   resetAvailableSeats(process.env.INITIAL_SEATS_COUNT || INITIAL_SEATS_COUNT)

@@ -1,12 +1,11 @@
 #!/usr/bin/yarn dev
-import { Queue, Job } from 'kue';
 
 /**
  * Creates push notification jobs from the array of jobs info.
  * @param {Job[]} jobs
  * @param {Queue} queue
  */
-export const createPushNotificationsJobs = (jobs, queue) => {
+const createPushNotificationsJobs = (jobs, queue) => {
   if (!(jobs instanceof Array)) {
     throw new Error('Jobs is not an array');
   }
@@ -23,7 +22,7 @@ export const createPushNotificationsJobs = (jobs, queue) => {
       .on('failed', (err) => {
         console.log('Notification job', job.id, 'failed:', err.message || err.toString());
       })
-      .on('progress', (progress, _data) => {
+      .on('progress', (progress, _) => {
         console.log('Notification job', job.id, `${progress}% complete`);
       });
     job.save();

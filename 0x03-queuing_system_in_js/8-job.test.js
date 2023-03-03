@@ -2,7 +2,7 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
 import { createQueue } from 'kue';
-import createPushNotificationsJobs from './8-job.js';
+import createPushNotificationsJobs from './8-job';
 
 describe('createPushNotificationsJobs', () => {
   const BIG_BROTHER = sinon.spy(console);

@@ -1,5 +1,5 @@
 #!/usr/bin/yarn dev
-import { createQueue, Job } from 'kue';
+import { createQueue } from 'kue';
 
 const BLACKLISTED_NUMBERS = ['4153518780', '4153518781'];
 const queue = createQueue();
@@ -12,8 +12,9 @@ const queue = createQueue();
  * @param {*} done
  */
 const sendNotification = (phoneNumber, message, job, done) => {
-  let total = 2, pending = 2;
-  let sendInterval = setInterval(() => {
+  const total = 2;
+  let pending = 2;
+  const sendInterval = setInterval(() => {
     if (total - pending <= total / 2) {
       job.progress(total - pending, total);
     }

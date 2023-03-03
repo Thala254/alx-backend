@@ -8,30 +8,30 @@ const listProducts = [
     itemId: 1,
     itemName: 'Suitcase 250',
     price: 50,
-    initialAvailableQuantity: 4
+    initialAvailableQuantity: 4,
   },
   {
     itemId: 2,
     itemName: 'Suitcase 450',
     price: 100,
-    initialAvailableQuantity: 10
+    initialAvailableQuantity: 10,
   },
   {
     itemId: 3,
     itemName: 'Suitcase 650',
     price: 350,
-    initialAvailableQuantity: 2
+    initialAvailableQuantity: 2,
   },
   {
     itemId: 4,
     itemName: 'Suitcase 1050',
     price: 550,
-    initialAvailableQuantity: 5
+    initialAvailableQuantity: 5,
   },
 ];
 
 const getItemById = (id) => {
-  const item = listProducts.find(obj => obj.itemId === id);
+  const item = listProducts.find((obj) => obj.itemId === id);
 
   if (item) {
     return Object.fromEntries(Object.entries(item));
@@ -47,33 +47,27 @@ const PORT = 1245;
  * @param {number} itemId - The id of the item.
  * @param {number} stock - The stock of the item.
  */
-const reserveStockById = async (itemId, stock) => {
-  return promisify(client.SET).bind(client)(`item.${itemId}`, stock);
-};
+const reserveStockById = async (itemId, stock) => promisify(client.SET).bind(client)(`item.${itemId}`, stock);
 
 /**
  * Retrieves the reserved stock for a given item.
  * @param {number} itemId - The id of the item.
  * @returns {Promise<String>}
  */
-const getCurrentReservedStockById = async (itemId) => {
-  return promisify(client.GET).bind(client)(`item.${itemId}`);
-};
+const getCurrentReservedStockById = async (itemId) => promisify(client.GET).bind(client)(`item.${itemId}`);
 
-app.get('/list_products', (_, res) => {
-  res.json(listProducts);
-});
+app.get('/list_products', (_, res) => res.json(listProducts));
 
 app.get('/list_products/:itemId(\\d+)', (req, res) => {
-  const itemId = Number.parseInt(req.params.itemId);
-  const productItem = getItemById(Number.parseInt(itemId));
+  const itemId = Number.parseInt(req.params.itemId, 10);
+  const productItem = getItemById(Number.parseInt(itemId, 10));
 
   if (!productItem) {
     res.json({ status: 'Product not found' });
     return;
   }
   getCurrentReservedStockById(itemId)
-    .then((result) => Number.parseInt(result || 0))
+    .then((result) => Number.parseInt(result || 0, 10))
     .then((reservedStock) => {
       productItem.currentQuantity = productItem.initialAvailableQuantity - reservedStock;
       res.json(productItem);
@@ -81,15 +75,15 @@ app.get('/list_products/:itemId(\\d+)', (req, res) => {
 });
 
 app.get('/reserve_product/:itemId', (req, res) => {
-  const itemId = Number.parseInt(req.params.itemId);
-  const productItem = getItemById(Number.parseInt(itemId));
+  const itemId = Number.parseInt(req.params.itemId, 10);
+  const productItem = getItemById(Number.parseInt(itemId, 10));
 
   if (!productItem) {
     res.json({ status: 'Product not found' });
     return;
   }
   getCurrentReservedStockById(itemId)
-    .then((result) => Number.parseInt(result || 0))
+    .then((result) => Number.parseInt(result || 0, 10))
     .then((reservedStock) => {
       if (reservedStock >= productItem.initialAvailableQuantity) {
         res.json({ status: 'Not enough stock available', itemId });
@@ -102,13 +96,7 @@ app.get('/reserve_product/:itemId', (req, res) => {
     });
 });
 
-const resetProductsStock = () => {
-  return Promise.all(
-    listProducts.map(
-      item => promisify(client.SET).bind(client)(`item.${item.itemId}`, 0),
-    )
-  );
-};
+const resetProductsStock = () => Promise.all(listProducts.map((item) => promisify(client.SET).bind(client)(`item.${item.itemId}`, 0)));
 
 app.listen(PORT, () => {
   resetProductsStock()
